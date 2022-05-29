@@ -4,8 +4,8 @@ go 1.19
 
 require (
 	github.com/go-logr/logr v1.2.3
-	go.seankhliao.com/svcrunner v0.0.0-20220528093611-00f1089335a6
-	go.seankhliao.com/webstyle v0.0.0-20220528093620-ab3355915ba2
+	go.seankhliao.com/svcrunner v0.1.1
+	go.seankhliao.com/webstyle v0.5.0
 )
 
 require (
@@ -20,6 +20,4 @@ require (
 	google.golang.org/protobuf v1.28.0 // indirect
 )
 
-retract (
-    [v0.1.0, v0.7.0] // old version
-)
+retract [v0.1.0, v0.7.0] // old version
