@@ -1,7 +1,6 @@
----
-title: vanity
-description: custom import paths
----
+# vanity
+
+## go custom import paths
 
 ### _vanity_
 
