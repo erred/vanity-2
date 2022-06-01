@@ -62,6 +62,8 @@ github.com/yuin/goldmark v1.4.12/go.mod h1:6yULJ656Px+3vBD8DxQVa3kxgyrAnzto9xy5t
 go.opentelemetry.io/proto/otlp v0.7.0/go.mod h1:PqfVotwruBrMGOCsRd/89rSnXhoiJIqeYNgFYFoEGnI=
 go.seankhliao.com/svcrunner v0.1.1 h1:9nWyFmepx8y7sbxBM3+kt01xI9YLembCn5yYNIiPMZo=
 go.seankhliao.com/svcrunner v0.1.1/go.mod h1:PXsGDjpRkR+MyuOIq1MCX1+8qt5wdRb7GxjWwSqr2PY=
+go.seankhliao.com/svcrunner v0.1.3 h1:qIqNu1rqjIZQjfn+cAwvLVazK3AyuK6vtgLnhr2t0AU=
+go.seankhliao.com/svcrunner v0.1.3/go.mod h1:O4xj8IPps3Or+WaBGvOAX6xNERscy+uguJTsCNQZYaA=
 go.seankhliao.com/webstyle v0.5.0 h1:/0kH4xPiHEqNcgL4YvKYAi2P9rdziReLK4bn9Ea5kbo=
 go.seankhliao.com/webstyle v0.5.0/go.mod h1:w6xuDEA1PA+MNe5ePY6PuFVuZJqTCM8q6rS/KYHQgks=
 golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACkg1iLfiJU5Ep61QUkGW8qpdssI0+w=

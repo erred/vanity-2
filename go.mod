@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	github.com/go-logr/logr v1.2.3
-	go.seankhliao.com/svcrunner v0.1.1
+	go.seankhliao.com/svcrunner v0.1.3
 	go.seankhliao.com/webstyle v0.5.0
 )
 
