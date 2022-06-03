@@ -29,8 +29,7 @@ steps:
     entrypoint: sh
     args:
       - '-c'
-      - |
-        gcloud run deploy ${_RUN} --image $(head -n 1 .image.txt) --region us-central1
+      - 'gcloud run deploy ${_RUN} --image $(head -n 1 .image.txt) --region us-central1'
 
 substitutions:
   _APP: 'vanity'
