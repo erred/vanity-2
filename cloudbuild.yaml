@@ -22,7 +22,7 @@ steps:
       - 'GOOGLE_SERVICE_ACCOUNT_NAME=cosign-signer@com-seankhliao.iam.gserviceaccount.com'
     args:
       - '-c'
-      - 'cosign sign $(cat .image.txt)'
+      - 'cosign sign $(head -n 1 .image.txt)'
 
   - id: deploy
     name: 'gcr.io/google.com/cloudsdktool/google-cloud-cli:alpine'
@@ -30,7 +30,7 @@ steps:
     args:
       - '-c'
       - |
-        gcloud run deploy ${_RUN} --image $(cat .image.txt) --region us-central1
+        gcloud run deploy ${_RUN} --image $(head -n 1 .image.txt) --region us-central1
 
 substitutions:
   _APP: 'vanity'
