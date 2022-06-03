@@ -13,7 +13,7 @@ steps:
       - '--use-new-run'
       - '--ignore-var-run'
 
-  - id: sign-latest
+  - id: sign
     name: 'gcr.io/projectsigstore/cosign'
     entrypoint: sh
     env:
@@ -36,6 +36,3 @@ substitutions:
   _APP: 'vanity'
   _REGISTRY: 'us-central1-docker.pkg.dev/com-seankhliao/run'
   _RUN: 'go-seankhliao-com'
-images:
-  - '${_REGISTRY}/${_APP}:${SHORT_SHA}'
-  - '${_REGISTRY}/${_APP}:latest'
