@@ -90,7 +90,7 @@ func (s *Server) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	p := strings.TrimPrefix(r.URL.Path, "/")
 	if p == "" { // index
 		http.ServeContent(rw, r, "index.html", s.ts, bytes.NewReader(s.index))
-		s.log.Info("served", "path", r.URL.Path)
+		s.log.Info("served index page", "path", r.URL.Path)
 		return
 	}
 	repo, _, _ := strings.Cut(p, "/")
@@ -99,15 +99,15 @@ func (s *Server) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	var buf1 bytes.Buffer
 	err := repoTpl.Execute(&buf1, data)
 	if err != nil {
-		s.log.Error(err, "render repotpl", "data", data)
 		http.Error(rw, "render repo", http.StatusInternalServerError)
+		s.log.Error(err, "render repotpl", "data", data)
 		return
 	}
 	var buf2 bytes.Buffer
 	err = headTpl.Execute(&buf2, data)
 	if err != nil {
-		s.log.Error(err, "render headtpl", "data", data)
 		http.Error(rw, "render head", http.StatusInternalServerError)
+		s.log.Error(err, "render headtpl", "data", data)
 		return
 	}
 
@@ -116,8 +116,8 @@ func (s *Server) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 		Head: buf2.String(),
 	})
 	if err != nil {
-		s.log.Error(err, "render html", "path", r.URL.Path)
 		http.Error(rw, "render html", http.StatusInternalServerError)
+		s.log.Error(err, "render html", "path", r.URL.Path)
 		return
 	}
 	_, err = io.Copy(rw, &buf3)
@@ -125,5 +125,5 @@ func (s *Server) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 		s.log.Error(err, "write response", "path", r.URL.Path)
 		return
 	}
-	s.log.Info("served", "path", r.URL.Path)
+	s.log.Info("served repo page", "path", r.URL.Path)
 }
