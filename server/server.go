@@ -90,7 +90,7 @@ func (s *Server) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	p := strings.TrimPrefix(r.URL.Path, "/")
 	if p == "" { // index
 		http.ServeContent(rw, r, "index.html", s.ts, bytes.NewReader(s.index))
-		s.log.Info("served index page", "path", r.URL.Path)
+		s.log.V(1).Info("served index page", "path", r.URL.Path)
 		return
 	}
 	repo, _, _ := strings.Cut(p, "/")
@@ -125,5 +125,5 @@ func (s *Server) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 		s.log.Error(err, "write response", "path", r.URL.Path)
 		return
 	}
-	s.log.Info("served repo page", "path", r.URL.Path)
+	s.log.V(1).Info("served repo page", "path", r.URL.Path)
 }
