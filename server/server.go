@@ -13,6 +13,8 @@ import (
 	"time"
 
 	"github.com/go-logr/logr"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/trace"
 	"go.seankhliao.com/svcrunner"
 	"go.seankhliao.com/svcrunner/envflag"
 	"go.seankhliao.com/webstyle"
@@ -51,7 +53,8 @@ type Server struct {
 	indexOnce sync.Once
 	index     []byte
 
-	log logr.Logger
+	log   logr.Logger
+	trace trace.Tracer
 }
 
 func New(hs *http.Server) *Server {
@@ -73,6 +76,7 @@ func (s *Server) Register(c *envflag.Config) {
 
 func (s *Server) Init(ctx context.Context, t svcrunner.Tools) error {
 	s.log = t.Log.WithName("vanity")
+	s.trace = otel.Tracer("vanity")
 
 	var err error
 	s.index, err = s.render.RenderBytes(indexRaw, webstyle.Data{})
@@ -83,6 +87,10 @@ func (s *Server) Init(ctx context.Context, t svcrunner.Tools) error {
 }
 
 func (s *Server) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
+	log := s.log.WithValues("path", r.URL.Path)
+	_, span := s.trace.Start(r.Context(), "serve")
+	defer span.End()
+
 	if r.Method != http.MethodGet {
 		http.Error(rw, "GET only", http.StatusMethodNotAllowed)
 		return
@@ -90,7 +98,7 @@ func (s *Server) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	p := strings.TrimPrefix(r.URL.Path, "/")
 	if p == "" { // index
 		http.ServeContent(rw, r, "index.html", s.ts, bytes.NewReader(s.index))
-		s.log.V(1).Info("served index page", "path", r.URL.Path)
+		log.V(1).Info("served index page")
 		return
 	}
 	repo, _, _ := strings.Cut(p, "/")
@@ -100,14 +108,14 @@ func (s *Server) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	err := repoTpl.Execute(&buf1, data)
 	if err != nil {
 		http.Error(rw, "render repo", http.StatusInternalServerError)
-		s.log.Error(err, "render repotpl", "data", data)
+		log.Error(err, "render repotpl", "data", data)
 		return
 	}
 	var buf2 bytes.Buffer
 	err = headTpl.Execute(&buf2, data)
 	if err != nil {
 		http.Error(rw, "render head", http.StatusInternalServerError)
-		s.log.Error(err, "render headtpl", "data", data)
+		log.Error(err, "render headtpl", "data", data)
 		return
 	}
 
@@ -117,13 +125,13 @@ func (s *Server) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	})
 	if err != nil {
 		http.Error(rw, "render html", http.StatusInternalServerError)
-		s.log.Error(err, "render html", "path", r.URL.Path)
+		log.Error(err, "render html")
 		return
 	}
 	_, err = io.Copy(rw, &buf3)
 	if err != nil {
-		s.log.Error(err, "write response", "path", r.URL.Path)
+		log.Error(err, "write response")
 		return
 	}
-	s.log.V(1).Info("served repo page", "path", r.URL.Path)
+	log.V(1).Info("served repo page")
 }
