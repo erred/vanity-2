@@ -8,7 +8,6 @@ import (
 	"io"
 	"net/http"
 	"strings"
-	"sync"
 	"text/template"
 	"time"
 
@@ -50,8 +49,7 @@ type Server struct {
 	ts     time.Time
 	render webstyle.Renderer
 
-	indexOnce sync.Once
-	index     []byte
+	index []byte
 
 	log   logr.Logger
 	trace trace.Tracer
