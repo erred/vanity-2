@@ -6,7 +6,7 @@ require (
 	github.com/go-logr/logr v1.2.3
 	go.opentelemetry.io/otel v1.7.0
 	go.opentelemetry.io/otel/trace v1.7.0
-	go.seankhliao.com/svcrunner v0.2.4
+	go.seankhliao.com/svcrunner v0.2.5-0.20220612202509-289008e67851
 	go.seankhliao.com/webstyle v0.5.0
 )
 
@@ -26,6 +26,7 @@ require (
 	go.opencensus.io v0.23.0 // indirect
 	go.opentelemetry.io/contrib/detectors/gcp v1.7.0 // indirect
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.32.0 // indirect
+	go.opentelemetry.io/otel/exporters/stdout/stdouttrace v1.7.0 // indirect
 	go.opentelemetry.io/otel/metric v0.30.0 // indirect
 	go.opentelemetry.io/otel/sdk v1.7.0 // indirect
 	go.seankhliao.com/gchat v0.0.0-20220612154931-8f1077ccd269 // indirect
