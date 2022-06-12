@@ -7,7 +7,7 @@ require (
 	github.com/go-logr/logr v1.2.3
 	go.opentelemetry.io/otel v1.7.0
 	go.opentelemetry.io/otel/trace v1.7.0
-	go.seankhliao.com/svcrunner v0.2.5-0.20220612202509-289008e67851
+	go.seankhliao.com/svcrunner v0.2.5-0.20220612211046-08efeca97205
 	go.seankhliao.com/webstyle v0.5.0
 )
 
