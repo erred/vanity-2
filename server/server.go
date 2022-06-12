@@ -158,5 +158,6 @@ func (s *Server) debug(rw http.ResponseWriter, r *http.Request) {
 		"wrapped_span_spanid", spanCtx2.SpanID(),
 		"extracted_span_traceid", spanCtx3.TraceID(),
 		"extracted_span_spanid", spanCtx3.SpanID(),
+		"headers_all", r.Header,
 	)
 }
