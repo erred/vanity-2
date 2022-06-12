@@ -3,11 +3,10 @@ module go.seankhliao.com/vanity
 go 1.19
 
 require (
-	github.com/GoogleCloudPlatform/opentelemetry-operations-go v0.32.1
 	github.com/go-logr/logr v1.2.3
 	go.opentelemetry.io/otel v1.7.0
 	go.opentelemetry.io/otel/trace v1.7.0
-	go.seankhliao.com/svcrunner v0.2.5-0.20220612211046-08efeca97205
+	go.seankhliao.com/svcrunner v0.2.5
 	go.seankhliao.com/webstyle v0.5.0
 )
 

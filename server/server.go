@@ -11,7 +11,6 @@ import (
 	"text/template"
 	"time"
 
-	"github.com/GoogleCloudPlatform/opentelemetry-operations-go/propagator"
 	"github.com/go-logr/logr"
 	"go.opentelemetry.io/otel"
 	otprop "go.opentelemetry.io/otel/propagation"
@@ -144,8 +143,7 @@ func (s *Server) debug(rw http.ResponseWriter, r *http.Request) {
 
 	spanCtx2 := trace.SpanContextFromContext(ctx)
 
-	cfprop := propagator.CloudTraceFormatPropagator{}
-	ctx = cfprop.Extract(ctx, otprop.HeaderCarrier(r.Header))
+	ctx = otel.GetTextMapPropagator().Extract(ctx, otprop.HeaderCarrier(r.Header))
 	spanCtx3 := trace.SpanContextFromContext(ctx)
 
 	s.log.Info("debug-xctx",
