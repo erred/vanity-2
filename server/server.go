@@ -13,7 +13,6 @@ import (
 
 	"github.com/go-logr/logr"
 	"go.opentelemetry.io/otel"
-	otprop "go.opentelemetry.io/otel/propagation"
 	"go.opentelemetry.io/otel/trace"
 	"go.seankhliao.com/svcrunner"
 	"go.seankhliao.com/svcrunner/envflag"
@@ -63,7 +62,6 @@ func New(hs *http.Server) *Server {
 	}
 	mux := http.NewServeMux()
 	mux.Handle("/", s)
-	mux.HandleFunc("/_debug", s.debug)
 	webstatic.Register(mux)
 	hs.Handler = mux
 	return s
@@ -134,28 +132,4 @@ func (s *Server) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 	log.V(1).Info("served repo page", "ctx", ctx, "http_request", r)
-}
-
-func (s *Server) debug(rw http.ResponseWriter, r *http.Request) {
-	spanCtx1 := trace.SpanContextFromContext(r.Context())
-	ctx, span := s.trace.Start(r.Context(), "debug-xctc")
-	defer span.End()
-
-	spanCtx2 := trace.SpanContextFromContext(ctx)
-
-	ctx = otel.GetTextMapPropagator().Extract(ctx, otprop.HeaderCarrier(r.Header))
-	spanCtx3 := trace.SpanContextFromContext(ctx)
-
-	s.log.Info("debug-xctx",
-		"xctc_header", r.Header.Get("x-cloud-trace-context"),
-		"spanctx_in_traceid", spanCtx1.TraceID(),
-		"spanctx_in_spanid", spanCtx1.SpanID(),
-		"created_span_traceid", span.SpanContext().TraceID(),
-		"created_span_spanid", span.SpanContext().SpanID(),
-		"wrapped_span_traceid", spanCtx2.TraceID(),
-		"wrapped_span_spanid", spanCtx2.SpanID(),
-		"extracted_span_traceid", spanCtx3.TraceID(),
-		"extracted_span_spanid", spanCtx3.SpanID(),
-		"headers_all", r.Header,
-	)
 }
