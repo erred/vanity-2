@@ -18,6 +18,8 @@ func TestServeHTTP(t *testing.T) {
 
 	ctx := context.Background()
 	svr := New(&http.Server{})
+	svr.host = "go.seankhliao.com"
+	svr.source = "github.com/seankhliao"
 	svr.Init(ctx, svcrunner.Tools{
 		Log: testr.New(t),
 	})
