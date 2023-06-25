@@ -16,8 +16,6 @@ build:
         dependencies:
           paths:
             - "**/*.go"
-            - "server/**/*"
-            - "kodata/**/*"
             - "go.mod"
 
   tagPolicy:

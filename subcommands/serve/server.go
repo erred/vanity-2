@@ -1,21 +1,20 @@
-package server
+package serve
 
 import (
 	"bytes"
 	"context"
 	_ "embed"
+	"errors"
 	"fmt"
 	"io"
+	"log/slog"
 	"net/http"
 	"strings"
 	"text/template"
 	"time"
 
-	"github.com/go-logr/logr"
-	"go.opentelemetry.io/otel"
-	"go.opentelemetry.io/otel/trace"
-	"go.seankhliao.com/svcrunner"
-	"go.seankhliao.com/svcrunner/envflag"
+	"go.seankhliao.com/svcrunner/v2/basehttp"
+	"go.seankhliao.com/svcrunner/v2/observability"
 	"go.seankhliao.com/webstyle"
 	"go.seankhliao.com/webstyle/webstatic"
 )
@@ -43,6 +42,10 @@ var (
 )
 
 type Server struct {
+	o *observability.O
+
+	svr *basehttp.Server
+
 	host   string
 	source string
 
@@ -50,53 +53,61 @@ type Server struct {
 	render webstyle.Renderer
 
 	index []byte
-
-	log   logr.Logger
-	trace trace.Tracer
 }
 
-func New(hs *http.Server) *Server {
+func New(ctx context.Context, c *Cmd) *Server {
+	svr := basehttp.New(ctx, &c.basehttp)
 	s := &Server{
+		o:   svr.O,
+		svr: svr,
+
+		host:   c.host,
+		source: c.source,
 		ts:     time.Now(),
 		render: webstyle.NewRenderer(webstyle.TemplateCompact),
 	}
-	mux := http.NewServeMux()
-	mux.Handle("/", s)
-	webstatic.Register(mux)
-	hs.Handler = mux
+
+	svr.Mux.Handle("/", s)
+	webstatic.Register(svr.Mux)
+
 	return s
 }
 
-func (s *Server) Register(c *envflag.Config) {
-	c.StringVar(&s.host, "vanity.host", "go.seankhliao.com", "host this server runs on")
-	c.StringVar(&s.source, "vanity.source", "github.com/seankhliao", "where the code is hosted")
-}
-
-func (s *Server) Init(ctx context.Context, t svcrunner.Tools) error {
-	s.log = t.Log.WithName("vanity")
-	s.trace = otel.Tracer("vanity")
-
+func (s *Server) Run(ctx context.Context) error {
 	var err error
 	s.index, err = s.render.RenderBytes(indexRaw, webstyle.Data{})
 	if err != nil {
 		return fmt.Errorf("render index page: %w", err)
 	}
-	return nil
+	return s.svr.Run(ctx)
 }
 
 func (s *Server) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
-	log := s.log.WithValues("path", r.URL.Path)
-	ctx, span := s.trace.Start(r.Context(), "serve")
+	ctx, span := s.o.T.Start(r.Context(), "serve vanity")
 	defer span.End()
 
 	if r.Method != http.MethodGet {
-		http.Error(rw, "GET only", http.StatusMethodNotAllowed)
+		s.o.HTTPErr(ctx, "GET only", errors.New("method not allowed"), rw, http.StatusMethodNotAllowed)
 		return
 	}
+
+	slogHTTPRequest := slog.Group("http_request",
+		slog.String("method", r.Method),
+		slog.String("url", r.URL.String()),
+		slog.String("proto", r.Proto),
+		slog.String("user_agent", r.UserAgent()),
+		slog.String("remote_address", r.RemoteAddr),
+		slog.String("referrer", r.Referer()),
+		slog.String("x-forwarded-for", r.Header.Get("x-forwarded-for")),
+		slog.String("forwarded", r.Header.Get("forwarded")),
+	)
+
 	p := strings.TrimPrefix(r.URL.Path, "/")
 	if p == "" { // index
 		http.ServeContent(rw, r, "index.html", s.ts, bytes.NewReader(s.index))
-		log.V(1).Info("served index page", "ctx", ctx, "http_request", r)
+		s.o.L.LogAttrs(ctx, slog.LevelInfo, "served index page",
+			slogHTTPRequest,
+		)
 		return
 	}
 	repo, _, _ := strings.Cut(p, "/")
@@ -105,15 +116,13 @@ func (s *Server) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	var buf1 bytes.Buffer
 	err := repoTpl.Execute(&buf1, data)
 	if err != nil {
-		http.Error(rw, "render repo", http.StatusInternalServerError)
-		log.Error(err, "render repotpl", "data", data, "ctx", ctx, "http_request", r)
+		s.o.HTTPErr(ctx, "render repo", err, rw, http.StatusInternalServerError)
 		return
 	}
 	var buf2 bytes.Buffer
 	err = headTpl.Execute(&buf2, data)
 	if err != nil {
-		http.Error(rw, "render head", http.StatusInternalServerError)
-		log.Error(err, "render headtpl", "data", data, "ctx", ctx, "http_request", r)
+		s.o.HTTPErr(ctx, "render head", err, rw, http.StatusInternalServerError)
 		return
 	}
 
@@ -122,14 +131,19 @@ func (s *Server) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 		Head: buf2.String(),
 	})
 	if err != nil {
-		http.Error(rw, "render html", http.StatusInternalServerError)
-		log.Error(err, "render html", "ctx", ctx, "http_request", r)
+		s.o.HTTPErr(ctx, "render html", err, rw, http.StatusInternalServerError)
 		return
 	}
 	_, err = io.Copy(rw, &buf3)
 	if err != nil {
-		log.Error(err, "write response", "ctx", ctx, "http_request", r)
+		s.o.HTTPErr(ctx, "write response", err, rw, http.StatusInternalServerError)
 		return
 	}
-	log.V(1).Info("served repo page", "ctx", ctx, "http_request", r)
+
+	s.o.L.LogAttrs(ctx, slog.LevelInfo, "served module page",
+		slog.Group("vanity",
+			slog.String("repo", repo),
+		),
+		slogHTTPRequest,
+	)
 }

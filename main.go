@@ -1,16 +1,27 @@
 package main
 
 import (
-	"net/http"
+	"context"
+	"flag"
+	"os"
+	"os/signal"
+	"syscall"
 
-	"go.seankhliao.com/svcrunner"
-	"go.seankhliao.com/vanity/server"
+	"github.com/google/subcommands"
+	"go.seankhliao.com/vanity/subcommands/serve"
 )
 
 func main() {
-	hs := &http.Server{}
-	svr := server.New(hs)
-	svcrunner.Options{}.Run(
-		svcrunner.NewHTTP(hs, svr.Register, svr.Init),
-	)
+	name := "earbug"
+	fset := flag.NewFlagSet(name, flag.ExitOnError)
+	cmdr := subcommands.NewCommander(fset, name)
+	cmdr.Register(&serve.Cmd{}, "server")
+
+	cmdr.Register(cmdr.HelpCommand(), "other")
+
+	fset.Parse(os.Args[1:])
+
+	ctx := context.Background()
+	ctx, _ = signal.NotifyContext(ctx, syscall.SIGINT, syscall.SIGTERM)
+	os.Exit(int(cmdr.Execute(ctx)))
 }
