@@ -17,20 +17,13 @@ build:
           paths:
             - "**/*.go"
             - "go.mod"
-
   tagPolicy:
     inputDigest: {}
-
   platforms:
     - linux/amd64
-
-  local:
-    concurrency: 0
-
 manifests:
   rawYaml:
     - deploy/cloudrun/service.yaml
-
 deploy:
   cloudrun:
     region: us-central1
