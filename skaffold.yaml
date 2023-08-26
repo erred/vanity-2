@@ -6,6 +6,7 @@ build:
   artifacts:
     - image: us-central1-docker.pkg.dev/com-seankhliao/run/vanity
       ko:
+        fromImage: cgr.dev/chainguard/static@sha256:67a1b00e0134e2b3a614c7198a26f7deed9d11b7acad4d52c79c0cfd47a2eae7
         env:
           - CGO_ENABLED=0
         flags:

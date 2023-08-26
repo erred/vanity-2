@@ -3,7 +3,7 @@ module go.seankhliao.com/vanity
 go 1.21.0
 
 require (
-	go.seankhliao.com/svcrunner/v3 v3.0.0-20230825210239-4f5a0684e6c9
+	go.seankhliao.com/svcrunner/v3 v3.0.0-20230826121122-52a97a8823fa
 	go.seankhliao.com/webstyle v0.0.0-20230625120550-9571efcb99d4
 )
 
@@ -27,6 +27,7 @@ require (
 	go.opentelemetry.io/otel/sdk/metric v0.39.0 // indirect
 	go.opentelemetry.io/otel/trace v1.16.0 // indirect
 	go.opentelemetry.io/proto/otlp v0.20.0 // indirect
+	golang.org/x/crypto/x509roots/fallback v0.0.0-20230804165707-b4ddeeda5bc7 // indirect
 	golang.org/x/net v0.14.0 // indirect
 	golang.org/x/sys v0.11.0 // indirect
 	golang.org/x/text v0.12.0 // indirect
