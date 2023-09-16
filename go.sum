@@ -49,8 +49,8 @@ go.opentelemetry.io/otel/trace v1.16.0 h1:8JRpaObFoW0pxuVPapkgH8UhHQj+bJW8jJsCZE
 go.opentelemetry.io/otel/trace v1.16.0/go.mod h1:Yt9vYq1SdNz3xdjZZK7wcXv1qv2pwLkqr2QVwea0ef0=
 go.opentelemetry.io/proto/otlp v0.20.0 h1:BLOA1cZBAGSbRiNuGCCKiFrCdYB7deeHDeD1SueyOfA=
 go.opentelemetry.io/proto/otlp v0.20.0/go.mod h1:3QgjzPALBIv9pcknj2EXGPXjYPFdUh/RQfF8Lz3+Vnw=
-go.seankhliao.com/svcrunner/v3 v3.0.0-20230826121122-52a97a8823fa h1:PFZLiTv+6Q8XeOqzOHXVyuORXnuPptFPtMKovSksIlg=
-go.seankhliao.com/svcrunner/v3 v3.0.0-20230826121122-52a97a8823fa/go.mod h1:yonO7fT+73M5RUFXg1iZCdGw5NqpoxIsb9FxL7lkTv4=
+go.seankhliao.com/svcrunner/v3 v3.0.0-20230916150750-e7fb57f6eef9 h1:FTVZtI3rhiAuQHbU2sKXCh0qCM2nip36NEP9MO+YA9I=
+go.seankhliao.com/svcrunner/v3 v3.0.0-20230916150750-e7fb57f6eef9/go.mod h1:yonO7fT+73M5RUFXg1iZCdGw5NqpoxIsb9FxL7lkTv4=
 go.seankhliao.com/webstyle v0.0.0-20230625120550-9571efcb99d4 h1:ah2q+MMP6FqYcdXjdUUbiIIpZTzYGFV8KXuYkY1T350=
 go.seankhliao.com/webstyle v0.0.0-20230625120550-9571efcb99d4/go.mod h1:k0yE3BtQZE8u8GtPBUYvSW9DEij4w36qdvVaIzJCGNA=
 go.uber.org/goleak v1.2.1 h1:NBol2c7O1ZokfZ0LEU9K6Whx/KnwvepVetCUhtKja4A=

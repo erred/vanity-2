@@ -3,7 +3,7 @@ module go.seankhliao.com/vanity
 go 1.21.0
 
 require (
-	go.seankhliao.com/svcrunner/v3 v3.0.0-20230826121122-52a97a8823fa
+	go.seankhliao.com/svcrunner/v3 v3.0.0-20230916150750-e7fb57f6eef9
 	go.seankhliao.com/webstyle v0.0.0-20230625120550-9571efcb99d4
 )
 
